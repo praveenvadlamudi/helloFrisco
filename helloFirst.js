@@ -12,7 +12,11 @@ function checkFormComplete() {
   const claim = document.getElementById('claimNumber').value.trim();
 
   document.getElementById('submitBtn').disabled =
-    !(state && company && claim);
+    !(
+		state !== "" &&
+		company !== "" &&
+		claimNumber.length > 0
+	);
 }
 
 // Attach listeners
