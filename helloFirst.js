@@ -1,66 +1,77 @@
+import { Desktop } from '@wxcc-desktop/sdk';
+
 let submitted = false;
 
-/**
- * Enable submit only when all inputs are filled
- */
-function checkFormComplete() {
-  const state = document.getElementById("stateSelect").value;
-  const company = document.getElementById("companySelect").value;
-  const claimNumber = document.getElementById("claimNumber").value.trim();
+// Initialize Desktop SDK
+Desktop.config.init();
 
-  document.getElementById("submitBtn").disabled =
-    !(state && company && claimNumber);
+// Enable submit only when all inputs are filled
+function checkFormComplete() {
+  const state = document.getElementById('stateSelect').value;
+  const carrier = document.getElementById('carrierSelect').value;
+  const claim = document.getElementById('claimNumber').value.trim();
+
+  document.getElementById('submitBtn').disabled =
+    !(state && carrier && claim);
 }
 
-/**
- * Submit selections and update WxCC CAD variables
- */
+// Attach listeners
+document.getElementById('stateSelect').addEventListener('change', checkFormComplete);
+document.getElementById('carrierSelect').addEventListener('change', checkFormComplete);
+document.getElementById('claimNumber').addEventListener('input', checkFormComplete);
+document.getElementById('submitBtn').addEventListener('click', submitSelections);
+
+
+async function getActiveInteractionId() {
+  const taskMap = await Desktop.actions.getTaskMap();
+  if (!taskMap || taskMap.size === 0) return null;
+
+  const task = [...taskMap.values()][0];
+  return task.interactionId || null;
+}
+
+
+// Main submit logic
 async function submitSelections() {
   if (submitted) return;
 
-  const state = document.getElementById("stateSelect").value;
-  const company = document.getElementById("companySelect").value;
-  const claimNumber = document.getElementById("claimNumber").value.trim();
-
-  if (!state || !company || !claimNumber) return;
-
-  // ---- Webex Contact Center SDK ----
-  const agentDesktop = window.wxcc.agentDesktop;
-
-  if (!agentDesktop) {
-    console.error("WxCC Agent Desktop SDK not available");
-    return;
-  }
+  const state = document.getElementById('stateSelect').value;
+  const carrier = document.getElementById('carrierSelect').value;
+  const claimNumber = document.getElementById('claimNumber').value.trim();
 
   try {
-    // Get active task (connected outbound call)
-    const task = await agentDesktop.task.getCurrentTask();
-
-    if (!task || !task.taskId) {
-      console.error("No active task found");
-      return;
-    }
-
-    // Update CAD variables
-    await agentDesktop.task.updateCadVariables(task.taskId, {
-      PVState: state,
-      PVCarrier: company,
-      PVClaimNumber: claimNumber
+    // Get active interaction
+	const interactionId = await getActiveInteractionId();
+	if (!interactionId) {
+	  console.warn('No active interaction');
+	  return;
+	}
+    
+    // Update CAD / Flow Global Variables
+    await Desktop.dialer.updateCadVariables({
+      interactionId,
+      data: {
+        attributes: {
+          PVState: state,
+          PVCarrier: carrier,
+          PVClaimNumber: claimNumber
+        }
+      }
     });
-
-    console.log("CAD variables updated successfully");
 
     submitted = true;
 
-    // Replace UI with confirmation
-    document.getElementById("app").innerHTML = `
+    // Replace UI
+    document.getElementById('app').innerHTML = `
       <h3>Selected Values</h3>
       <p><strong>State:</strong> ${state}</p>
-      <p><strong>Company:</strong> ${company}</p>
+      <p><strong>Carrier:</strong> ${carrier}</p>
       <p><strong>Claim Number:</strong> ${claimNumber}</p>
     `;
 
+    console.log('CAD variables updated successfully');
+
   } catch (error) {
-    console.error("Failed to update CAD variables", error);
+    console.error('Failed to update CAD variables', error);
   }
 }
