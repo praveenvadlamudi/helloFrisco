@@ -11,7 +11,7 @@
 
     <label>
       State:
-      <select id="stateSelect">
+      <select id="stateSelect" onchange="checkFormComplete()">
         <option value="" disabled selected hidden></option>
         <option value="IL">IL</option>
         <option value="AZ">AZ</option>
@@ -22,7 +22,7 @@
 
     <label>
       Company:
-      <select id="companySelect">
+      <select id="companySelect" onchange="checkFormComplete()">
         <option value="" disabled selected hidden></option>
         <option value="StateFarm">StateFarm</option>
         <option value="Geico">Geico</option>
@@ -31,7 +31,21 @@
 
     <br><br>
 
-    <button onclick="submitSelections()">Submit</button>
+    <label>
+      Claim Number:
+      <input
+        type="text"
+        id="claimNumber"
+        placeholder="Enter claim number"
+        oninput="checkFormComplete()"
+      />
+    </label>
+
+    <br><br>
+
+    <button id="submitBtn" onclick="submitSelections()" disabled>
+      Submit
+    </button>
   </div>
 
   <!-- JS loaded after DOM -->
