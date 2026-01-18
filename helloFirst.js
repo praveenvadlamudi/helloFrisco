@@ -9,7 +9,7 @@ Desktop.config.init();
 function checkFormComplete() {
   const state = document.getElementById('stateSelect').value;
   const company = document.getElementById('companySelect').value;
-  const claim = document.getElementById('claimNumber').value.trim();
+  const claimNumber = document.getElementById('claimNumber').value.trim();
 
   document.getElementById('submitBtn').disabled =
     !(
