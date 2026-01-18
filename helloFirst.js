@@ -1,1 +1,5 @@
-document.body.innerText = "hello from Friso, TX";
+const appDiv = document.getElementById("app");
+
+if (appDiv) {
+  appDiv.innerText = "hello from Dallas, TX";
+}
