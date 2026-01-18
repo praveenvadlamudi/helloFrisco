@@ -7,26 +7,26 @@
 <body>
 
   <div id="app">
-    <h3>Select claim values</h3>
+    <h3>Select values</h3>
 
     <label>
       State:
       <select id="stateSelect" onchange="checkFormComplete()">
-		<option value="" hidden></option>
-		<option value="IL">IL</option>
-		<option value="AZ">AZ</option>
-	  </select>
+        <option value="" disabled selected hidden></option>
+        <option value="IL">IL</option>
+        <option value="AZ">AZ</option>
+      </select>
     </label>
 
     <br><br>
 
     <label>
       Company:
-	  <select id="companySelect" onchange="checkFormComplete()">
-		<option value="" hidden></option>
-		<option value="StateFarm">StateFarm</option>
-		<option value="Geico">Geico</option>
-	  </select>
+      <select id="companySelect" onchange="checkFormComplete()">
+        <option value="" disabled selected hidden></option>
+        <option value="StateFarm">StateFarm</option>
+        <option value="Geico">Geico</option>
+      </select>
     </label>
 
     <br><br>
@@ -43,13 +43,12 @@
 
     <br><br>
 
-    <button id="submitBtn" onclick="submitSelections()" >
+    <button id="submitBtn" onclick="submitSelections()" disabled>
       Submit
     </button>
-
   </div>
 
-  <!-- IMPORTANT: module -->
-  <script type="module" src="helloFirst.js"></script>
+  <!-- JS loaded after DOM -->
+  <script src="helloFirst.js"></script>
 </body>
 </html>
