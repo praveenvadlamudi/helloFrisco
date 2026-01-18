@@ -1,9 +1,4 @@
-import { Desktop } from '@wxcc-desktop/sdk';
-
 let submitted = false;
-
-// Initialize Desktop SDK
-Desktop.config.init();
 
 function checkFormComplete() {
   const state = document.getElementById("stateSelect").value;
