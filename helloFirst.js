@@ -8,52 +8,47 @@ Desktop.config.init();
 // Enable submit only when all inputs are filled
 function checkFormComplete() {
   const state = document.getElementById('stateSelect').value;
-  const carrier = document.getElementById('carrierSelect').value;
+  const company = document.getElementById('companySelect').value;
   const claim = document.getElementById('claimNumber').value.trim();
 
   document.getElementById('submitBtn').disabled =
-    !(state && carrier && claim);
+    !(state && company && claim);
 }
 
 // Attach listeners
 document.getElementById('stateSelect').addEventListener('change', checkFormComplete);
-document.getElementById('carrierSelect').addEventListener('change', checkFormComplete);
+document.getElementById('companySelect').addEventListener('change', checkFormComplete);
 document.getElementById('claimNumber').addEventListener('input', checkFormComplete);
 document.getElementById('submitBtn').addEventListener('click', submitSelections);
-
-
-async function getActiveInteractionId() {
-  const taskMap = await Desktop.actions.getTaskMap();
-  if (!taskMap || taskMap.size === 0) return null;
-
-  const task = [...taskMap.values()][0];
-  return task.interactionId || null;
-}
-
 
 // Main submit logic
 async function submitSelections() {
   if (submitted) return;
 
   const state = document.getElementById('stateSelect').value;
-  const carrier = document.getElementById('carrierSelect').value;
+  const company = document.getElementById('companySelect').value;
   const claimNumber = document.getElementById('claimNumber').value.trim();
 
   try {
-    // Get active interaction
-	const interactionId = await getActiveInteractionId();
-	if (!interactionId) {
-	  console.warn('No active interaction');
-	  return;
-	}
-    
+    // Get current task map
+    const taskMap = await Desktop.actions.getTaskMap();
+
+    if (!taskMap || taskMap.size === 0) {
+      console.error('No active task found');
+      return;
+    }
+
+    // Get first active interaction
+    const task = [...taskMap.values()][0];
+    const interactionId = task.interactionId;
+
     // Update CAD / Flow Global Variables
     await Desktop.dialer.updateCadVariables({
       interactionId,
       data: {
         attributes: {
           PVState: state,
-          PVCarrier: carrier,
+          PVCarrier: company,
           PVClaimNumber: claimNumber
         }
       }
@@ -65,7 +60,7 @@ async function submitSelections() {
     document.getElementById('app').innerHTML = `
       <h3>Selected Values</h3>
       <p><strong>State:</strong> ${state}</p>
-      <p><strong>Carrier:</strong> ${carrier}</p>
+      <p><strong>Company:</strong> ${company}</p>
       <p><strong>Claim Number:</strong> ${claimNumber}</p>
     `;
 
