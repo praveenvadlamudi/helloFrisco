@@ -11,12 +11,6 @@ function checkFormComplete() {
   const company = document.getElementById('companySelect').value;
   const claimNumber = document.getElementById('claimNumber').value.trim();
 
-  document.getElementById('submitBtn').disabled =
-    !(
-		state !== "" &&
-		company !== "" &&
-		claimNumber.length > 0
-	);
 }
 
 // Attach listeners
