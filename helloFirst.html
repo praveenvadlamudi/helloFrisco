@@ -7,11 +7,11 @@
 <body>
 
   <div id="app">
-    <h3>Select values</h3>
+    <h3>Select Claim values</h3>
 
     <label>
       State:
-      <select id="stateSelect" onchange="checkFormComplete()">
+      <select id="stateSelect">
         <option value="" disabled selected hidden></option>
         <option value="IL">IL</option>
         <option value="AZ">AZ</option>
@@ -21,8 +21,8 @@
     <br><br>
 
     <label>
-      Company:
-      <select id="companySelect" onchange="checkFormComplete()">
+      Carrier:
+      <select id="carrierSelect">
         <option value="" disabled selected hidden></option>
         <option value="StateFarm">StateFarm</option>
         <option value="Geico">Geico</option>
@@ -37,18 +37,17 @@
         type="text"
         id="claimNumber"
         placeholder="Enter claim number"
-        oninput="checkFormComplete()"
       />
     </label>
 
     <br><br>
 
-    <button id="submitBtn" onclick="submitSelections()" disabled>
+    <button id="submitBtn" disabled>
       Submit
     </button>
   </div>
 
-  <!-- JS loaded after DOM -->
-  <script src="helloFirst.js"></script>
+  <!-- IMPORTANT: module -->
+  <script type="module" src="helloFirst.js"></script>
 </body>
 </html>
