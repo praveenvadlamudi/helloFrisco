@@ -2,39 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>State & Carrier Selection</title>
+  <title>Selection App</title>
 </head>
 <body>
 
-  <div id="app"></div>
+  <div id="app">
+    <h3>Select values</h3>
 
-  <hr />
+    <label>
+      State:
+      <select id="stateSelect">
+        <option value="" disabled selected hidden></option>
+        <option value="IL">IL</option>
+        <option value="AZ">AZ</option>
+      </select>
+    </label>
 
-  <form method="GET">
-    <label for="state"><strong>State:</strong></label>
-    <select name="state" id="state">
-      <option value="FL">FL</option>
-      <option value="IL" selected>IL</option>
-      <option value="KS">KS</option>
-      <option value="TX">TX</option>
-    </select>
+    <br><br>
 
-    <br /><br />
+    <label>
+      Company:
+      <select id="companySelect">
+        <option value="" disabled selected hidden></option>
+        <option value="StateFarm">StateFarm</option>
+        <option value="Geico">Geico</option>
+      </select>
+    </label>
 
-    <label for="carrier"><strong>Carrier:</strong></label>
-    <select name="carrier" id="carrier">
-      <option value="Farmers">Farmers</option>
-      <option value="Geico">Geico</option>
-      <option value="Statefarm" selected>Statefarm</option>
-      <option value="USAA">USAA</option>
-    </select>
+    <br><br>
 
-    <br /><br />
+    <button onclick="submitSelections()">Submit</button>
+  </div>
 
-    <button type="submit">Submit</button>
-  </form>
-
-  <!-- Load JS after HTML -->
+  <!-- JS loaded after DOM -->
   <script src="helloFirst.js"></script>
 </body>
 </html>
