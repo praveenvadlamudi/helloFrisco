@@ -1,19 +1,25 @@
-// Default values
-const DEFAULT_STATE = "IL";
-const DEFAULT_CARRIER = "Statefarm";
+// State to track submission
+let submitted = false;
 
-// Read query parameters
-const params = new URLSearchParams(window.location.search);
-const state = params.get("state") || DEFAULT_STATE;
-const carrier = params.get("carrier") || DEFAULT_CARRIER;
+function submitSelections() {
+  if (submitted) return;
 
-// Display selected values
-const appDiv = document.getElementById("app");
-if (appDiv) {
+  const state = document.getElementById("stateSelect").value;
+  const company = document.getElementById("companySelect").value;
+
+  // Prevent submit if nothing selected
+  if (!state || !company) {
+    alert("Please select both values.");
+    return;
+  }
+
+  submitted = true;
+
+  const appDiv = document.getElementById("app");
+
   appDiv.innerHTML = `
-    <h2>Selected Values</h2>
+    <h3>Selected Values</h3>
     <p><strong>State:</strong> ${state}</p>
-    <p><strong>Carrier:</strong> ${carrier}</p>
+    <p><strong>Company:</strong> ${company}</p>
   `;
 }
-
