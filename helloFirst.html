@@ -11,22 +11,22 @@
 
     <label>
       State:
-      <select id="stateSelect">
-        <option value="" disabled selected hidden></option>
-        <option value="IL">IL</option>
-        <option value="AZ">AZ</option>
-      </select>
+      <select id="stateSelect" onchange="checkFormComplete()">
+		<option value="" hidden></option>
+		<option value="IL">IL</option>
+		<option value="AZ">AZ</option>
+	  </select>
     </label>
 
     <br><br>
 
     <label>
       Company:
-      <select id="companySelect">
-        <option value="" disabled selected hidden></option>
-        <option value="StateFarm">StateFarm</option>
-        <option value="Geico">Geico</option>
-      </select>
+	  <select id="companySelect" onchange="checkFormComplete()">
+		<option value="" hidden></option>
+		<option value="StateFarm">StateFarm</option>
+		<option value="Geico">Geico</option>
+	  </select>
     </label>
 
     <br><br>
