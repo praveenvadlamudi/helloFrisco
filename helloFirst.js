@@ -6,18 +6,18 @@ let submitted = false;
 Desktop.config.init();
 
 // Enable submit only when all inputs are filled
-function checkFormComplete() {
-  const state = document.getElementById('stateSelect').value;
-  const company = document.getElementById('companySelect').value;
-  const claimNumber = document.getElementById('claimNumber').value.trim();
 
+function checkFormComplete() {
+  const state = document.getElementById("stateSelect").value;
+  const company = document.getElementById("companySelect").value;
+  const claimNumber = document.getElementById("claimNumber").value.trim();
+
+  const submitBtn = document.getElementById("submitBtn");
+
+  // Enable submit only if all three have values
+  submitBtn.disabled = !(state && company && claimNumber);
 }
 
-// Attach listeners
-document.getElementById('stateSelect').addEventListener('change', checkFormComplete);
-document.getElementById('companySelect').addEventListener('change', checkFormComplete);
-document.getElementById('claimNumber').addEventListener('input', checkFormComplete);
-document.getElementById('submitBtn').addEventListener('click', submitSelections);
 
 // Main submit logic
 async function submitSelections() {
