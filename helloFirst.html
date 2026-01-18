@@ -2,12 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Hello Test</title>
+  <title>State & Carrier Selection</title>
 </head>
 <body>
+
   <div id="app"></div>
 
-  <!-- Load JS after DOM is available -->
+  <hr />
+
+  <form method="GET">
+    <label for="state"><strong>State:</strong></label>
+    <select name="state" id="state">
+      <option value="FL">FL</option>
+      <option value="IL" selected>IL</option>
+      <option value="KS">KS</option>
+      <option value="TX">TX</option>
+    </select>
+
+    <br /><br />
+
+    <label for="carrier"><strong>Carrier:</strong></label>
+    <select name="carrier" id="carrier">
+      <option value="Farmers">Farmers</option>
+      <option value="Geico">Geico</option>
+      <option value="Statefarm" selected>Statefarm</option>
+      <option value="USAA">USAA</option>
+    </select>
+
+    <br /><br />
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <!-- Load JS after HTML -->
   <script src="helloFirst.js"></script>
 </body>
 </html>
