@@ -4,18 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <title>Selection App</title>
-
-  <!-- Load Webex Desktop SDK -->
-  <script type="module" src="https://unpkg.com/@wxcc-desktop/sdk"></script>
 </head>
-
 <body>
   <div id="app">
-    <h3>Select 3 values</h3>
+    <h3>Select 3 values 2</h3>
 
     <label>
       State:
-      <select id="stateSelect" onchange="checkFormComplete()">
+      <select id="stateSelect">
         <option value="" disabled selected hidden></option>
         <option value="IL">IL</option>
         <option value="AZ">AZ</option>
@@ -26,7 +22,7 @@
 
     <label>
       Company:
-      <select id="companySelect" onchange="checkFormComplete()">
+      <select id="companySelect">
         <option value="" disabled selected hidden></option>
         <option value="StateFarm">StateFarm</option>
         <option value="Geico">Geico</option>
@@ -37,16 +33,14 @@
 
     <label>
       Claim Number:
-      <input type="text" id="claimNumber" placeholder="Enter claim number" oninput="checkFormComplete()"/>
+      <input type="text" id="claimNumber" placeholder="Enter claim number"/>
     </label>
 
     <br><br>
 
-    <button id="submitBtn" onclick="submitSelections()" disabled>
-      Submit
-    </button>
+    <button id="submitBtn" disabled>Submit</button>
   </div>
 
-  <script type="module" src="helloFirst2.js" ></script>
+  <script type="module" src="helloFirst2.js"></script>
 </body>
 </html>
