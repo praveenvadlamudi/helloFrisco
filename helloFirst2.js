@@ -1,4 +1,3 @@
-
 import { Desktop } from "https://unpkg.com/@wxcc-desktop/sdk/dist/index.mjs";
 
 let submitted = false;
