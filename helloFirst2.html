@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Selection App</title>
+
+  <!-- Load Webex Desktop SDK -->
+  <script type="module" src="https://unpkg.com/@wxcc-desktop/sdk"></script>
+</head>
+
+<body>
+  <div id="app">
+    <h3>Select values</h3>
+
+    <label>
+      State:
+      <select id="stateSelect" onchange="checkFormComplete()">
+        <option value="" disabled selected hidden></option>
+        <option value="IL">IL</option>
+        <option value="AZ">AZ</option>
+      </select>
+    </label>
+
+    <br><br>
+
+    <label>
+      Company:
+      <select id="companySelect" onchange="checkFormComplete()">
+        <option value="" disabled selected hidden></option>
+        <option value="StateFarm">StateFarm</option>
+        <option value="Geico">Geico</option>
+      </select>
+    </label>
+
+    <br><br>
+
+    <label>
+      Claim Number:
+      <input type="text" id="claimNumber" placeholder="Enter claim number" oninput="checkFormComplete()"/>
+    </label>
+
+    <br><br>
+
+    <button id="submitBtn" onclick="submitSelections()" disabled>
+      Submit
+    </button>
+  </div>
+
+  <script src="helloFirst.js" type="module"></script>
+</body>
+</html>
