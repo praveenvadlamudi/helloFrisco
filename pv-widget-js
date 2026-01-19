@@ -1,0 +1,177 @@
+
+// pv-widget.js
+// A minimal custom widget for WxCC Desktop to show/edit PVState & PVCarrier on OUTBOUND calls.
+
+class PvWidget extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+
+    // Simple UI
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host { font-family: system-ui, "Segoe UI", Arial, sans-serif; display:block; padding:12px; }
+        .row { margin: 8px 0; }
+        label { display:block; margin-bottom:4px; font-weight:600; }
+        input { width:100%; padding:6px 8px; border:1px solid #ccc; border-radius:4px; }
+        button { padding:6px 12px; border:0; background:#0957d0; color:#fff; border-radius:4px; cursor:pointer; }
+        button:disabled { background:#9bb5ea; cursor:not-allowed; }
+        .hint { color:#666; font-size:12px; margin-top:6px; }
+        .badge { display:inline-block; font-size:12px; background:#eef2ff; color:#2740b8; padding:2px 8px; border-radius:999px; margin-left:6px; }
+      </style>
+
+      <div id="status" class="hint">Initializing…</div>
+      <div id="panel" style="display:none;">
+        <div class="row"><b>Interaction:</b> <span id="iid">—</span><span class="badge" id="direction"></span></div>
+        <div class="row">
+          <label for="pvstate">PVState</label>
+          <input id="pvstate" />
+        </div>
+        <div class="row">
+          <label for="pvcarrier">PVCarrier</label>
+          <input id="pvcarrier" />
+        </div>
+        <div class="row">
+          <button id="save">Save to CAD</button>
+          <span class="hint">Default values come from Global Variables via your outdial flow’s Desktop variables.</span>
+        </div>
+      </div>
+    `;
+
+    this.statusEl = this.shadowRoot.getElementById('status');
+    this.panelEl = this.shadowRoot.getElementById('panel');
+    this.iidEl = this.shadowRoot.getElementById('iid');
+    this.dirEl = this.shadowRoot.getElementById('direction');
+    this.inputState = this.shadowRoot.getElementById('pvstate');
+    this.inputCarrier = this.shadowRoot.getElementById('pvcarrier');
+    this.saveBtn = this.shadowRoot.getElementById('save');
+
+    this._interactionId = null;
+    this._isOutbound = false;
+
+    // Bind handlers
+    this._handleAssigned = this._handleAssigned.bind(this);
+    this._save = this._save.bind(this);
+  }
+
+  connectedCallback() {
+    // Load SDK dynamically so this file stays self-contained.
+    // If SDK is already present, skip injecting.
+    if (!window.__wxccDesktopSdkLoading) {
+      window.__wxccDesktopSdkLoading = new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://unpkg.com/@wxcc-desktop/sdk/dist/umd/index.min.js';
+        s.async = true;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+
+    window.__wxccDesktopSdkLoading
+      .then(() => this._initSdk())
+      .catch(e => this._setStatus('Failed to load SDK: ' + e));
+  }
+
+  async _initSdk() {
+    try {
+      // The SDK exposes window.Desktop in UMD builds.
+      const { Desktop } = window;
+
+      await Desktop.config.init(); // required init step
+      this._setStatus('Waiting for a manual outbound call…');
+
+      // Listen for contact assignment. Cisco samples use these same event names.
+      Desktop.agentContact.addEventListener('eAgentContactAssigned', this._handleAssigned);
+
+      // Save button handler
+      this.saveBtn.addEventListener('click', this._save);
+
+    } catch (e) {
+      this._setStatus('SDK init error: ' + (e?.message || e));
+    }
+  }
+
+  async _handleAssigned(msg) {
+    try {
+      const { Desktop } = window;
+      const data = msg?.data || {};
+      const direction =
+        data?.contactDirection?.type ||
+        data?.interaction?.contactDirection?.type ||
+        '';
+
+      this._isOutbound = (direction === 'OUTBOUND');
+      if (!this._isOutbound) {
+        this._setStatus('An interaction was assigned, but it is not OUTBOUND. Waiting…');
+        return;
+      }
+
+      // Find interactionId and mediaType if needed
+      const interactionId = data?.interactionId || data?.interaction?.interactionId || null;
+      this._interactionId = interactionId;
+
+      // CAD can be present in the event; otherwise, read from task map
+      let cad = data?.interaction?.callAssociatedData;
+      if (!cad) {
+        const taskMap = await Desktop.actions.getTaskMap();
+        const task = taskMap?.get(this._interactionId);
+        cad = task?.interaction?.callAssociatedData;
+      }
+
+      // Pre-fill from CAD (which carries the flow desktop variables)
+      this.inputState.value = cad?.PVState?.value ?? '';
+      this.inputCarrier.value = cad?.PVCarrier?.value ?? '';
+
+      // Show panel
+      this.iidEl.textContent = this._interactionId || '—';
+      this.dirEl.textContent = 'OUTBOUND';
+      this.panelEl.style.display = 'block';
+      this._setStatus('');
+
+    } catch (e) {
+      this._setStatus('Error handling assignment: ' + (e?.message || e));
+    }
+  }
+
+  async _save() {
+    if (!this._interactionId) return;
+    this.saveBtn.disabled = true;
+
+    try {
+      const { Desktop } = window;
+
+      // Update CAD via Dialer API. Current SDK samples/blogs show this method name.
+      await Desktop.dialer.updateCadVariables({
+        interactionId: this._interactionId,
+        data: {
+          PVState:   { value: this.inputState.value },
+          PVCarrier: { value: this.inputCarrier.value }
+        }
+      });
+
+      // Refresh from task map to confirm
+      const taskMap = await Desktop.actions.getTaskMap();
+      const task = taskMap?.get(this._interactionId);
+      const cad = task?.interaction?.callAssociatedData;
+
+      this.inputState.value   = cad?.PVState?.value ?? this.inputState.value;
+      this.inputCarrier.value = cad?.PVCarrier?.value ?? this.inputCarrier.value;
+
+      this._setStatus('Saved.');
+      setTimeout(() => this._setStatus(''), 1500);
+
+    } catch (e) {
+      this._setStatus('Save failed: ' + (e?.message || e));
+    } finally {
+      this.saveBtn.disabled = false;
+    }
+  }
+
+  _setStatus(text) {
+    this.statusEl.textContent = text || '';
+  }
+}
+
+// Register the custom element so the desktop can render it by tag name.
+customElements.define('pv-widget', PvWidget);
