@@ -4,8 +4,9 @@ let submitted = false;
 function checkFormComplete() {
   const state = document.getElementById("stateSelect")?.value ?? "";
   const company = document.getElementById("companySelect")?.value ?? "";
+  const callType = document.getElementById("callType")?.value ?? "";
   const claimNumber = (document.getElementById("claimNumber")?.value || "").trim();
-  document.getElementById("submitBtn").disabled = !(state && company && claimNumber);
+  document.getElementById("submitBtn").disabled = !(state && company && callType && claimNumber);
 }
 
 async function submitSelections() {
@@ -13,13 +14,14 @@ async function submitSelections() {
 
   const state = document.getElementById("stateSelect").value;
   const company = document.getElementById("companySelect").value;
+  const callType = document.getElementById("callType").value;
   const claimNumber = document.getElementById("claimNumber").value.trim();
-  if (!state || !company || !claimNumber) return;
+  if (!state || !company || !callType || !claimNumber) return;
 
   submitted = true;
 
   try {
-    // ✅ Use jsDelivr ESM endpoint with a pinned version
+    // Use jsDelivr ESM endpoint with a pinned version
     const { Desktop } = await import(
       "https://cdn.jsdelivr.net/npm/@wxcc-desktop/sdk@2.0.11/+esm"
     );
@@ -43,7 +45,7 @@ async function submitSelections() {
       console.log("Global variables updated successfully");
     }
 
-    await updateGlobalVariables(state, company, claimNumber);
+    await updateGlobalVariables(state, company, callType, claimNumber);
   } catch (e) {
     console.error("SDK import or CAD update failed:", e);
   }
@@ -53,6 +55,7 @@ async function submitSelections() {
     <h3>Selected Values (sent to Flow)</h3>
     <p><strong>State:</strong> ${state}</p>
     <p><strong>Company:</strong> ${company}</p>
+	<p><strong>Call Type:</strong> ${callType}</p>
     <p><strong>Claim Number:</strong> ${claimNumber}</p>
     <p style="color:green;"><b>✔ Flow Variables Update Initiated</b></p>
   `;
@@ -62,15 +65,17 @@ async function submitSelections() {
 function wireEvents() {
   const s = document.getElementById("stateSelect");
   const c = document.getElementById("companySelect");
+  const t = document.getElementById("callType");
   const n = document.getElementById("claimNumber");
   const b = document.getElementById("submitBtn");
 
-  if (!s || !c || !n || !b) {
+  if (!s || !c || !t || !n || !b) {
     setTimeout(wireEvents, 50);
     return;
   }
   s.addEventListener("change", checkFormComplete);
   c.addEventListener("change", checkFormComplete);
+  t.addEventListener("change", checkFormComplete);
   n.addEventListener("input", checkFormComplete);
   b.addEventListener("click", submitSelections);
 
