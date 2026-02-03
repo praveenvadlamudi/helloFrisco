@@ -1,6 +1,6 @@
 
 let submitted = false;
-
+//Added callType
 function checkFormComplete() {
   const state = document.getElementById("stateSelect")?.value ?? "";
   const company = document.getElementById("companySelect")?.value ?? "";
